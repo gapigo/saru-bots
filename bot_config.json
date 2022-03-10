@@ -1,0 +1,15 @@
+[
+  {
+    "name": "PUDIM",
+    "extensions": ["random_messages"]
+  },
+  {
+    "name": "NANO",
+    "extensions": ["info"]
+  },
+  {
+    "name": "ENQUEDITA",
+    "extensions": []
+  }
+]
+
