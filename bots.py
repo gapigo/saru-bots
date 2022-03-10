@@ -8,7 +8,7 @@ import os
 dotenv.load_dotenv()
 
 
-async def run_bot(bot_config: dict, loop=None):
+async def run_bot(bot_config: dict):
     """
     :param bot_config: {
                     "name": "PUDIM",
@@ -18,7 +18,8 @@ async def run_bot(bot_config: dict, loop=None):
     token = os.getenv(bot_config['name'] + '_TOKEN')
     bot = lightbulb.BotApp(token=token,
                            prefix='$',
-                           banner=None
+                           banner=None,
+                           # default_enabled_guilds=os.getenv('GUILD_ID')
                            )
 
     @bot.listen(hikari.StartedEvent)
@@ -44,3 +45,10 @@ def run_bots():
             else:
                 asyncio.ensure_future(run)
     asyncio.get_event_loop().run_forever()
+
+
+"""
+https://stackoverflow.com/questions/32054066/
+python-how-to-run-multiple-coroutines-concurrently-using-asyncio#
+:~:text=You%20can%20use%20asyncio.,call%20for%20starting%20event%20loop.
+"""
