@@ -1,14 +1,19 @@
 [
   {
     "name": "PUDIM",
-    "extensions": ["random_messages"]
+    "library":  "discord.py",
+    "extensions": ["basic_commands", "monopoly", "numbers", "silly_games","tic_tac_toe_game",
+      "uno"],
+    "prefix": "."
   },
   {
     "name": "NANO",
+    "library":  "hikari.py",
     "extensions": ["info"]
   },
   {
     "name": "ENQUEDITA",
+    "library:": "hikari.py",
     "extensions": []
   }
 ]
