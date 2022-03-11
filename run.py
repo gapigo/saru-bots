@@ -3,7 +3,6 @@ from bots import run_bots
 from flask_app import app
 from threading import Thread
 
-
 def run_flask():
     app.run(host="0.0.0.0", port=8080, use_reloader=False)
 

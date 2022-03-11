@@ -3,6 +3,7 @@ import unicodedata
 from sqlalchemy import ForeignKey
 from flask_app import db
 
+
 class User(db.Model):
     # class User(db.Model):
     __tablename__ = "users"
@@ -64,3 +65,16 @@ class Follow(db.Model):
 
     user = db.relationship('User', foreign_keys=user_id)
     follower = db.relationship('User', foreign_keys=follower_id)
+
+
+class TongoMessage(db.Model):
+    __tablename__ = "tongo_messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+    message = db.Column(db.String(1999), unique=True, nullable=False)
+    type = db.Column(db.String(16), nullable=True)
+
+    def __init__(self, message, type="neutral"):
+        self.message = message
+        self.type = type
