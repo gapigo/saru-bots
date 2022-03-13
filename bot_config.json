@@ -3,8 +3,13 @@
     "name": "PUDIM",
     "library":  "discord.py",
     "extensions": ["basic_commands", "monopoly", "numbers", "silly_games","tic_tac_toe_game",
-      "uno", "random_messages_tongo"],
+      "uno"],
     "prefix": "."
+  },
+  {
+    "name": "TONGAIS",
+    "library": "discord.py",
+    "extensions": ["random_messages_tongo"]
   },
   {
     "name": "NANO",
