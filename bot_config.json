@@ -3,7 +3,7 @@
     "name": "PUDIM",
     "library":  "discord.py",
     "extensions": ["basic_commands", "monopoly", "numbers", "silly_games","tic_tac_toe_game",
-      "uno"],
+      "uno", "random_messages_tongo"],
     "prefix": "."
   },
   {
