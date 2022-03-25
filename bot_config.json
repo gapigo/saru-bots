@@ -1,25 +1,24 @@
-[
-  {
-    "name": "PUDIM",
+{
+  "pudimBot": {
     "library":  "discord.py",
     "extensions": ["basic_commands", "monopoly", "numbers", "silly_games","tic_tac_toe_game",
-      "uno"],
+      "uno", "bots_controller"],
     "prefix": "."
   },
-  {
-    "name": "TONGAIS",
+  "resenhasTongais": {
     "library": "discord.py",
-    "extensions": ["random_messages_tongo"]
+    "extensions": ["random_messages_tongo"],
+    "disabled": true
   },
-  {
-    "name": "NANO",
+  "nano_moura": {
     "library":  "hikari.py",
-    "extensions": ["info"]
+    "extensions": ["info"],
+    "shutdown_msg": "Tchau seus bunda mole"
   },
-  {
-    "name": "ENQUEDITA",
+  "Enquedita": {
     "library:": "hikari.py",
-    "extensions": []
+    "extensions": [],
+    "shutdown_msg": "Tchau fascistes. Estou indo embora, mas a revolução e o comunismo resiste!"
   }
-]
+}
 
