@@ -11,11 +11,14 @@ DEFAULT_PREFIX = '$'
 running_bots = {
     # 'BOT_NAME': task_object
 }
-stopped_bots = {}
 discord_loop = None
 
 
-def get_bots_config() -> dict:
+def add_bot_to_running_bots(bot_name: str, bot):
+    running_bots[bot_name.lower()] = bot
+
+
+def get_bots_config(lower: bool = False) -> dict:
     # TODO → Only initialize a tester bot
     if os.getenv('DEBUG'):
         ...
@@ -24,7 +27,7 @@ def get_bots_config() -> dict:
         bots_config: dict = json.load(j)
         for bot_name, bot_config in bots_config.items():
             if not bot_config.get('disabled'):
-                available_bots[bot_name] = bot_config
+                available_bots[bot_name.lower() if lower else bot_name] = bot_config
         return available_bots
 
 
@@ -47,11 +50,22 @@ def get_prefix(bot_config: dict) -> str:
 def get_token(bot_name: str) -> str:
     key: str = bot_name + '_TOKEN'
     key = key.upper()
-    return os.getenv(key)
+    token = os.getenv(key)
+    if not token:
+        raise NameError(f'{bot_name}_TOKEN not found in the environment.')
+    return token
+
+
+def get_bot_id(bot_name: str) -> str:
+    key: str = bot_name + '_ID'
+    key = key.upper()
+    bot_id = os.getenv(key)
+    if not bot_id:
+        raise NameError(f'{bot_name}_ID not found in the environment.')
+    return bot_id
 
 
 async def run_hikari(bot_name: str, bot_config: dict) -> None:
-    # token = os.getenv(bot_config['name'] + '_TOKEN')
     token = get_token(bot_name)
     bot = lightbulb.BotApp(token=token,
                            prefix=get_prefix(bot_config),
@@ -61,12 +75,11 @@ async def run_hikari(bot_name: str, bot_config: dict) -> None:
 
     @bot.listen(hikari.StartedEvent)
     async def bot_started(event: hikari.StartedEvent):
-        # print(f'BOT {str(bot.get_me()):.>20} connected.')
-        # bot_name = str(bot.get_me()).split('#')[0]
         print_console_on_online(bot_name)
         if bot_config.get('notify_if_online'):
-            channel = await bot.rest.fetch_channel('425222899104874507')
-            await channel.send('O símbolo paterno está online.')
+            channel = await bot.rest.fetch_channel(get_general_config().get("alert_channel_id"))
+            hi_msg = bot_config.get('connect_msg')
+            await channel.send(hi_msg if hi_msg else get_general_config().get("connect_default_message"))
 
         for extension in bot_config['extensions']:
             try:
@@ -75,40 +88,13 @@ async def run_hikari(bot_name: str, bot_config: dict) -> None:
                 print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'hikari.py' extension.")
             except lightbulb.errors.CommandAlreadyExists:
                 print(f"BOT {bot_name}: The extension 'hikari.py' '{extension}' has commands that are already taken.")
+        add_bot_to_running_bots(bot_name, bot)
 
-        # running_bots[str(bot_name)] = asyncio.current_task()
-        # stopped_bots[bot_config['name']] = bot.close
-        # print(bot.close)
-        # tasks = [
-        #     t
-        #     for t
-        #     in asyncio.all_tasks()
-        #     if (
-        #             t is not asyncio.current_task()
-        #             and t._coro.__name__ != 'main'
-        #     )
-        # ]
-        # print('DENTRO DE UM BOT')
-        # for task in tasks:
-        #     # print(task.__dir__())
-        #     print(task.get_coro())
-
-    # @bot.listen(hikari.GuildMessageCreateEvent)
-    # async def bot_started(event: hikari.GuildMessageCreateEvent):
-    #     bot_name = str(bot.get_me()).split('#')[0]
-    #     running_bots[str(bot_name)] = asyncio.current_task()
-    #     channel = await bot.rest.fetch_channel('425222899104874507')
-    #     await channel.send('O símbolo paterno está online.')
-
-    @bot.listen(hikari.DMMessageCreateEvent)
-    async def shutdown_bot(event: hikari.DMMessageCreateEvent):
-        # bot_name = str(bot.get_me()).split('#')[0]
-
-        if event.message.content == f'stop {bot_name}':
-            channel = await bot.rest.fetch_channel(get_general_config().get("alert_channel_id"))
-            bye_msg = bot_config.get('shutdown_msg')
-            await channel.send(bye_msg if bye_msg else get_general_config().get("shutdown_default_message"))
-            await bot.close()
+    @bot.listen(hikari.StoppingEvent)
+    async def on_stopping(event: hikari.StoppingEvent):
+        channel = await bot.rest.fetch_channel(get_general_config().get("alert_channel_id"))
+        bye_msg = bot_config.get('shutdown_msg')
+        await channel.send(bye_msg if bye_msg else get_general_config().get("shutdown_default_message"))
 
     await bot.start()
 
@@ -118,14 +104,12 @@ async def run_dpy(bot_name: str, bot_config: dict):
 
     @bot.event  # Evento de inicialização
     async def on_ready():  # Emite um registro no console se o bot está
-        # print(f'{client.user.name} está pronto.')  # Rodando ou não
-        # bot_name = bot.user.name
         print_console_on_online(bot_name)
 
         if bot_config.get('notify_if_online'):
-            # channel = await bot.rest.fetch_channel('425222899104874507')
-            # await channel.send('O símbolo paterno está online.')
-            ...
+            channel = await bot.fetch_channel(get_general_config().get("alert_channel_id"))
+            hi_msg = bot_config.get('connect_msg')
+            await channel.send(hi_msg if hi_msg else get_general_config().get("connect_default_message"))
 
         for extension in bot_config['extensions']:
             try:
@@ -134,6 +118,14 @@ async def run_dpy(bot_name: str, bot_config: dict):
                 print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'discord.py' extension.")
             except commands.errors.CommandRegistrationError:
                 print(f"BOT {bot_name}: The extension 'discord.py' '{extension}' has commands that are already taken.")
+
+        add_bot_to_running_bots(bot_name, bot)
+
+    @bot.event  # Evento de desligamento
+    async def on_disconnect():
+        channel = await bot.fetch_channel(get_general_config().get("alert_channel_id"))
+        bye_msg = bot_config.get('shutdown_msg')
+        await channel.send(bye_msg if bye_msg else get_general_config().get("shutdown_default_message"))
 
     token = get_token(bot_name)
     await bot.start(token)
@@ -157,12 +149,9 @@ def run_bots():
     bots_config: dict = get_bots_config()
     discord_loop = asyncio.get_event_loop()  # initializing the async loop
     for bot_name, bot_config in bots_config.items():
-        # bot_name = bot_config.get('name', 'undefined')
         run = run_bot(bot_name, bot_config)
         bot_task = asyncio.ensure_future(run)
-        # bot_task.set_name(bot_name)
-        # if not bot_config.get('library', 'hikari.py'):
-        running_bots[bot_name] = bot_task
+        # running_bots[bot_name] = bot_task
     discord_loop.run_forever()
 
 
