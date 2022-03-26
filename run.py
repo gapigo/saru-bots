@@ -16,5 +16,3 @@ if __name__ == "__main__":
         run_bots()  # run discord
     except KeyboardInterrupt:
         sys.exit(0)
-    # Thread(target=run_flask).start()  # run flask
-    # run_bots()  # run discord

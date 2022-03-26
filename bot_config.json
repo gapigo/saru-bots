@@ -1,4 +1,13 @@
 {
+  "windows_me": {
+    "library": "discord.py",
+    "prefix": ".",
+    "debug": true,
+    "extensions": [],
+    "connect_msg": "AZUL AZUL AZUL TELA AZUL KKKKKKKKKKKKKKKKK\nfeliz 2005",
+    "shutdown_msg": "O PORNO DE ANAO DO BILL GATES TÁ EM 4K SOCOOOO...",
+    "_notify_if_online": true
+  },
   "pudimBot": {
     "library":  "discord.py",
     "extensions": ["basic_commands", "monopoly", "numbers", "silly_games","tic_tac_toe_game",
