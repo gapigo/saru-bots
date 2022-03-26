@@ -13,6 +13,13 @@
     "shutdown_msg": "Caguei sai correndo pau no cu de quem tá lendo",
     "notify_if_online": true
   },
+  "assassination_folk": {
+    "library":  "discord.py",
+    "extensions": ["kanji_sender"],
+    "prefix": ".",
+    "connect_msg": "よ-! こんにちは, ||Konnchiwa|| estalangelos paitolas ke nao conecen o asasinato",
+    "shutdown_msg": "Vo enbola poke asasinalon mina diginidadi またねー"
+  },
   "nano_moura": {
     "library":  "hikari.py",
     "extensions": ["info"],

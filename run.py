@@ -1,4 +1,4 @@
-import os
+import os, sys
 from bots import run_bots
 from flask_app import app
 from threading import Thread
@@ -11,6 +11,10 @@ if __name__ == "__main__":
     if os.name != "nt":
         import uvloop
         uvloop.install()
-
-    Thread(target=run_flask).start()  # run flask
-    run_bots()  # run discord
+    try:
+        Thread(target=run_flask).start()  # run flask
+        run_bots()  # run discord
+    except KeyboardInterrupt:
+        sys.exit(0)
+    # Thread(target=run_flask).start()  # run flask
+    # run_bots()  # run discord

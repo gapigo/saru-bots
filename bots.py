@@ -52,7 +52,7 @@ def get_token(bot_name: str) -> str:
     key = key.upper()
     token = os.getenv(key)
     if not token:
-        raise NameError(f'{bot_name}_TOKEN not found in the environment.')
+        raise NameError(bot_name + '_TOKEN not found in the environment.')
     return token
 
 
