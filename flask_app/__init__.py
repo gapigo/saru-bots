@@ -17,8 +17,9 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 from extensions.random_messages_tongo import models
+from extensions.random_messages_enquedita import models
+from extensions.random_messages_nano_moura import models
 from flask_app.controllers import default
-
 
 def run():
 	app.run(host="0.0.0.0", port=8080, use_reloader=False)

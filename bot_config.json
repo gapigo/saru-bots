@@ -1,6 +1,6 @@
 {
   "windows_me": {
-    "library": "discord.py",
+    "library": "_discord.py",
     "prefix": ".",
     "debug": true,
     "extensions": [],
@@ -31,14 +31,14 @@
   },
   "nano_moura": {
     "library":  "hikari.py",
-    "extensions": ["info"],
+    "extensions": ["random_messages_nano_moura"],
     "connect_msg": "Entrei e já to puto",
     "shutdown_msg": "Tchau seus bunda mole",
     "notify_if_online": true
   },
   "Enquedita": {
-    "library:": "discord.py",
-    "extensions": [],
+    "library:": "hikari.py",
+    "extensions": ["random_messages_enquedita"],
     "connect_msg": "O espírito paterno marxista se encontra operante. Luta!",
     "shutdown_msg": "Tchau fascistes. Estou indo embora, mas a revolução e o comunismo resiste!",
     "notify_if_online": true

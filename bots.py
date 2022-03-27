@@ -82,7 +82,8 @@ async def run_hikari(bot_name: str, bot_config: dict) -> None:
     bot = lightbulb.BotApp(token=token,
                            prefix=get_prefix(bot_config),
                            banner=None,
-                           # default_enabled_guilds=os.getenv('GUILD_ID')
+                           #default_enabled_guilds=os.getenv('GUILD_ID')
+                           default_enabled_guilds=338045183558156289
                            )
 
     @bot.listen(hikari.StartedEvent)
