@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "repl_python3_beta_saru-bots"
+version = "0.1.0"
+description = ""
+authors = ["gapigo <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask-SQLAlchemy = "^2.5.1"
+SQLAlchemy = "^1.4.32"
+uvloop = "^0.16.0"
+alembic = "^1.7.6"
+discord = "^1.7.3"
+python-dotenv = "^0.19.2"
+Flask-Migrate = "^3.1.0"
+Flask-Script = "^2.0.6"
+Flask = "^2.0.3"
+
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
