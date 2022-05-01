@@ -8,6 +8,34 @@ from discord.ext import commands
 
 dotenv.load_dotenv()
 DEFAULT_PREFIX = '$'
+running_bots = {
+    # 'BOT_NAME': task_object
+}
+discord_loop = None
+
+
+def add_bot_to_running_bots(bot_name: str, bot):
+    running_bots[bot_name.lower()] = bot
+
+
+def get_bots_config(lower: bool = False) -> dict:
+    with open('bot_config.json', encoding='utf-8') as j:
+        available_bots = {}
+        bots_config: dict = json.load(j)
+        for bot_name, bot_config in bots_config.items():
+            if os.getenv('DEBUG'):
+                if bot_config.get('debug'):
+                    available_bots[bot_name.lower() if lower else bot_name] = bot_config
+            else:
+                if not bot_config.get('disabled'):
+                    available_bots[bot_name.lower() if lower else bot_name] = bot_config
+        return available_bots
+
+
+def get_general_config() -> dict:
+    with open('general_config.json', encoding='utf-8') as j:
+        general_config = json.load(j)
+        return general_config
 
 
 def print_console_on_online(bot_name):
@@ -20,66 +48,124 @@ def get_prefix(bot_config: dict) -> str:
     return prefix
 
 
-def get_token(bot_config: dict) -> str:
-    return os.getenv(bot_config['name'] + '_TOKEN')
+def get_token(bot_name: str) -> str:
+    key: str = bot_name + '_TOKEN'
+    key = key.upper()
+    token = os.getenv(key)
+    if not token:
+        raise NameError(key + '_TOKEN not found in the environment.')
+    return token
 
 
-async def run_hikari(bot_config: dict) -> None:
-    # token = os.getenv(bot_config['name'] + '_TOKEN')
-    token = get_token(bot_config)
+def get_bot_id(bot_name: str) -> str:
+    key: str = bot_name + '_ID'
+    key = key.upper()
+    bot_id = os.getenv(key)
+    if not bot_id:
+        raise NameError(f'{bot_name}_ID not found in the environment.')
+    return bot_id
+
+
+def get_all_extensions() -> list:
+    rootdir = os.path.dirname(__file__)
+    extensions = os.path.join(rootdir, 'extensions')
+    all_extensions = []
+    for file in os.listdir(extensions):
+        if str(file).endswith('.py'):
+            file = file[:-2]
+        all_extensions.append(file)
+    return all_extensions
+
+
+async def run_hikari(bot_name: str, bot_config: dict) -> None:
+    token = get_token(bot_name)
     bot = lightbulb.BotApp(token=token,
                            prefix=get_prefix(bot_config),
                            banner=None,
-                           # default_enabled_guilds=os.getenv('GUILD_ID')
+                           #default_enabled_guilds=os.getenv('GUILD_ID')
+                           default_enabled_guilds=338045183558156289
                            )
 
     @bot.listen(hikari.StartedEvent)
     async def bot_started(event: hikari.StartedEvent):
-        # print(f'BOT {str(bot.get_me()):.>20} connected.')
-        bot_name = str(bot.get_me()).split('#')[0]
         print_console_on_online(bot_name)
         if bot_config.get('notify_if_online'):
-            channel = await bot.rest.fetch_channel('425222899104874507')
-            await channel.send('O símbolo paterno está online.')
+            channel = await bot.rest.fetch_channel(get_general_config().get("alert_channel_id"))
+            hi_msg = bot_config.get('connect_msg')
+            await channel.send(hi_msg if hi_msg else get_general_config().get("connect_default_message"))
+
+        all = False
+        if bot_config['extensions'] == ['all']:
+            bot_config['extensions'] = get_all_extensions()
+            all = True
+            print('Hikari.py - Extensions loaded: ', end='')
 
         for extension in bot_config['extensions']:
             try:
                 bot.load_extensions(f"extensions.{extension}")
+                if all:
+                    print(extension, end=", ")
             except lightbulb.errors.ExtensionMissingLoad:
-                print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'hikari.py' extension.")
+                if not all:
+                    print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'hikari.py' extension.")
             except lightbulb.errors.CommandAlreadyExists:
-                print(f"BOT {bot_name}: The extension 'hikari.py' '{extension}' has commands that are already taken.")
+                if not all:
+                    print(f"BOT {bot_name}: The extension 'hikari.py' '{extension}' has commands that are already taken.")
+        add_bot_to_running_bots(bot_name, bot)
+
+    @bot.listen(hikari.StoppingEvent)
+    async def on_stopping(event: hikari.StoppingEvent):
+        channel = await bot.rest.fetch_channel(get_general_config().get("alert_channel_id"))
+        bye_msg = bot_config.get('shutdown_msg')
+        await channel.send(bye_msg if bye_msg else get_general_config().get("shutdown_default_message"))
 
     await bot.start()
 
 
-async def run_dpy(bot_config: dict):
+async def run_dpy(bot_name: str, bot_config: dict):
     bot = commands.Bot(command_prefix=get_prefix(bot_config))
 
     @bot.event  # Evento de inicialização
     async def on_ready():  # Emite um registro no console se o bot está
-        # print(f'{client.user.name} está pronto.')  # Rodando ou não
-        bot_name = bot.user.name
         print_console_on_online(bot_name)
 
         if bot_config.get('notify_if_online'):
-            # channel = await bot.rest.fetch_channel('425222899104874507')
-            # await channel.send('O símbolo paterno está online.')
-            ...
+            channel = await bot.fetch_channel(get_general_config().get("alert_channel_id"))
+            hi_msg = bot_config.get('connect_msg')
+            await channel.send(hi_msg if hi_msg else get_general_config().get("connect_default_message"))
+
+        all = False
+        if bot_config['extensions'] == ['all']:
+            bot_config['extensions'] = get_all_extensions()
+            all = True
+            print('Discord.py - Extensions loaded: ', end='')
 
         for extension in bot_config['extensions']:
             try:
                 bot.load_extension(f"extensions.{extension}")
-            except commands.errors.NoEntryPointError:
-                print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'discord.py' extension.")
-            except commands.errors.CommandRegistrationError:
-                print(f"BOT {bot_name}: The extension 'discord.py' '{extension}' has commands that are already taken.")
+                if all:
+                    print(extension, end=", ")
 
-    token = get_token(bot_config)
+            except commands.errors.NoEntryPointError:
+                if not all:
+                    print(f"BOT {bot_name}: The extension '{extension}' is not a valid 'discord.py' extension.")
+            except commands.errors.CommandRegistrationError:
+                if not all:
+                    print(f"BOT {bot_name}: The extension 'discord.py' '{extension}' has commands that are already taken.")
+
+        add_bot_to_running_bots(bot_name, bot)
+
+    @bot.event  # Evento de desligamento
+    async def on_disconnect():
+        channel = await bot.fetch_channel(get_general_config().get("alert_channel_id"))
+        bye_msg = bot_config.get('shutdown_msg')
+        await channel.send(bye_msg if bye_msg else get_general_config().get("shutdown_default_message"))
+
+    token = get_token(bot_name)
     await bot.start(token)
 
 
-async def run_bot(bot_config: dict):
+async def run_bot(bot_name: str, bot_config: dict):
     """
     :param bot_config: {
                     "name": "PUDIM",
@@ -87,25 +173,19 @@ async def run_bot(bot_config: dict):
                 }
     """
     if bot_config.get('library') == 'discord.py':
-        await run_dpy(bot_config)
+        await run_dpy(bot_name, bot_config)
     else:
-        await run_hikari(bot_config)
+        await run_hikari(bot_name, bot_config)
 
 
 def run_bots():
-    with open('bot_config.json') as f:
-        bots_config = json.load(f)
-        # for num, bot_config in enumerate(bots_config):
-        #     run = run_bot(bot_config)
-        #     if num == 0:
-        #         asyncio.get_event_loop().run_until_complete(run)
-        #     else:
-        #         asyncio.ensure_future(run)
-        asyncio.get_event_loop()
-        for bot_config in bots_config:
-            run = run_bot(bot_config)
-            asyncio.ensure_future(run)
-    asyncio.get_event_loop().run_forever()
+    global discord_loop, running_bots
+    bots_config: dict = get_bots_config()
+    discord_loop = asyncio.get_event_loop()  # initializing the async loop
+    for bot_name, bot_config in bots_config.items():
+        run = run_bot(bot_name, bot_config)
+        asyncio.ensure_future(run)
+    discord_loop.run_forever()
 
 
 """
