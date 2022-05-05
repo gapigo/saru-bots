@@ -16,11 +16,12 @@
   },
   "resenhasTongais": {
     "library": "discord.py",
-    "extensions": ["random_messages_tongo"],
+    "extensions": ["random_messages_tongo", "selector"],
     "disabled": true,
     "connect_msg": "HIHIHIHIIHIHIHIIIIIIIIIIIII ||hihihihihihihi||",
     "shutdown_msg": "Caguei sai correndo pau no cu de quem tá lendo",
-    "notify_if_online": true
+    "notify_if_online": true,
+    "prefix": "$"
   },
   "assassination_folk": {
     "library":  "discord.py",
