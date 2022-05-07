@@ -10,7 +10,12 @@ from extensions.colorful_selection.new_selection.register_in_database import db
 import asyncio
 
 async def return_response(message, client):
-  parameters = message.content.split('$sel')[1].strip()
+  if not isinstance(message, str):
+    parameters = message.content.split('$sel')[1].strip()
+  elif message.startswith('$sel'):
+    parameters = message.split('$sel')[1].strip()
+  else:
+    parameters = message.strip()
   if parameters.startswith('--new'):
     return create_selection(message, parameters)
   
@@ -35,7 +40,7 @@ async def return_response(message, client):
     data = get_data_from_name(name)
     return str(data)
   
-  if parameters.startswith('-h'):
+  if parameters.startswith('-h') or parameters.startswith('--help'):
     return (hm.HELPER_MESSAGE_PT1, hm.HELPER_MESSAGE_PT2)
 
   if parameters.startswith('-'):
