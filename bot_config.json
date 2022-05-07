@@ -1,9 +1,9 @@
 {
   "windows_me": {
-    "library": "_discord.py",
+    "library": "discord.py",
     "prefix": "$",
     "debug": true,
-    "extensions": ["selector"],
+    "extensions": ["colorful_selection", "random_messages_tongo"],
     "connect_msg": "AZUL AZUL AZUL TELA AZUL KKKKKKKKKKKKKKKKK\nfeliz 2005",
     "shutdown_msg": "O PORNO DE ANAO DO BILL GATES TÁ EM 4K SOCOOOO...",
     "_notify_if_online": true
@@ -16,7 +16,7 @@
   },
   "resenhasTongais": {
     "library": "discord.py",
-    "extensions": ["random_messages_tongo", "selector"],
+    "extensions": ["random_messages_tongo", "colorful_selection"],
     "disabled": true,
     "connect_msg": "HIHIHIHIIHIHIHIIIIIIIIIIIII ||hihihihihihihi||",
     "shutdown_msg": "Caguei sai correndo pau no cu de quem tá lendo",

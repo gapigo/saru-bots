@@ -1,5 +1,10 @@
-from replit import db
+# from replit import db
 
+class d:
+  def __init__(self):
+    self.keys = [1, 2, 3, 4]
+
+db = d()
 def register_in_database(data):
   if "colorful_selections" in db.keys():
     if selection_name_exists(data['config']['name']):

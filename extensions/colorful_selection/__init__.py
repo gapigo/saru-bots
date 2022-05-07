@@ -1,11 +1,9 @@
 import discord
 from discord.ext import commands
-import sys
-print(sys.path)
-from extensions.selector.option_manager import return_response as selection_options
+from extensions.colorful_selection.options_manager import return_response as selection_options
 
 
-class Selector(commands.Cog):
+class ColorfulSelection(commands.Cog):
 
     def __init__(self, client):
         self.client = client
@@ -13,7 +11,7 @@ class Selector(commands.Cog):
     # Registro de inicialização
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Cog selector está pronta')
+        print('Cog colorful_selection está pronta')
 
     '''
         1. COMANDOS
@@ -36,4 +34,4 @@ class Selector(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(ComandosSimples(client))
+    client.add_cog(ColorfulSelection(client))

@@ -4,7 +4,7 @@ import hikari
 import json
 import lightbulb
 import os
-#from discord.ext import commands
+from discord.ext import commands
 
 dotenv.load_dotenv()
 DEFAULT_PREFIX = '$'

@@ -1,6 +1,6 @@
-import extensions.selector.new_selector.message_interpreter as mi
-import extensions.selector.new_selector.config_translator as ct
-import extensions.selector.new_selector.register_in_database as rid
+import extensions.colorful_selection.new_selection.message_interpreter as mi
+import extensions.colorful_selection.new_selection.config_translator as ct
+import extensions.colorful_selection.new_selection.register_in_database as rid
 
 def new_selection(message, register=True):
     content = message.content

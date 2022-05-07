@@ -1,12 +1,12 @@
-from extensions.selector.new_selector.new_selector import new_selection
-import extensions.selector.new_selector.register_in_database as rid
-from extensions.selector.get_saved_selector import validate_if_private as validate_if_private
-from extensions.selector.get_saved_selector import get_data as get_saved_data
-from extensions.selector.get_saved_selector import get_data_from_db as get_data_from_name
-import extensions.selector.basic_selectors as bs
-import extensions.selector.helper_message as hm
+from extensions.colorful_selection.new_selection.new_selection import new_selection
+import extensions.colorful_selection.new_selection.register_in_database as rid
+from extensions.colorful_selection.get_saved_selection import validate_if_private as validate_if_private
+from extensions.colorful_selection.get_saved_selection import get_data as get_saved_data
+from extensions.colorful_selection.get_saved_selection import get_data_from_db as get_data_from_name
+import extensions.colorful_selection.basic_selection as bs
+import extensions.colorful_selection.helper_message as hm
 
-from replit import db
+from extensions.colorful_selection.new_selection.register_in_database import db
 import asyncio
 
 async def return_response(message, client):

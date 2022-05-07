@@ -1,4 +1,4 @@
-import extensions.selector.basic_selectors as basic_selectors
+import extensions.colorful_selection.basic_selection as basic_selection
 
 
 def config_translator(message, config):
@@ -19,9 +19,9 @@ def config_to_selection(config):
     if config_has_errors(config):
         return 'erro!\n' + config['error']
     if has_key(config, 'message'):
-        selection = basic_selectors.get_selection_message(color=config['color'], message=config['message'])
+        selection = basic_selection.get_selection_message(color=config['color'], message=config['message'])
     else:
-        selection = basic_selectors.get_selection_title_body(color=config['color'], title=config['title'], body=config['body'])
+        selection = basic_selection.get_selection_title_body(color=config['color'], title=config['title'], body=config['body'])
     if config.get('outside'):
         selection += f"\n{config['outside']}"
     return selection

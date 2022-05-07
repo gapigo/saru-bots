@@ -78,15 +78,7 @@ class RandomMessagesTongo(commands.Cog):
     async def send_tongal(self, message):
         msg = message.content
         if any(word in msg for word in self.trigger_words):
-            print(self.messages)
             await message.channel.send(random.choice(self.messages))
-
-    # async def on_message(self, message):
-    #     print(message.content)
-
-
-
-
 
 
 def setup(client):
