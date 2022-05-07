@@ -1,10 +1,10 @@
-fromextensions.selector.colorful_selection.new_selector.new_selector import new_selection
-import extensions.selector.colorful_selection.new_selector.register_in_database as rid
-fromextensions.selector.colorful_selection.get_saved_selector import validate_if_private as validate_if_private
-fromextensions.selector.colorful_selection.get_saved_selector import get_data as get_saved_data
-fromextensions.selector.colorful_selection.get_saved_selector import get_data_from_db as get_data_from_name
-import extensions.selector.colorful_selection.basic_selectors as bs
-import extensions.selector.colorful_selection.helper_message as hm
+from extensions.selector.new_selector.new_selector import new_selection
+import extensions.selector.new_selector.register_in_database as rid
+from extensions.selector.get_saved_selector import validate_if_private as validate_if_private
+from extensions.selector.get_saved_selector import get_data as get_saved_data
+from extensions.selector.get_saved_selector import get_data_from_db as get_data_from_name
+import extensions.selector.basic_selectors as bs
+import extensions.selector.helper_message as hm
 
 from replit import db
 import asyncio

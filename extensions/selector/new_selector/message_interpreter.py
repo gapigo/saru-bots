@@ -1,4 +1,4 @@
-import extensions.selector.colorful_selection.new_selector.states_manager as states_manager
+import extensions.selector.new_selector.states_manager as states_manager
 
 debug = False
 

@@ -1,8 +1,8 @@
 from replit import db
 import datetime
-import extensions.selector.colorful_selection.options_manager as om
-# fromextensions.selector.colorful_selection.options_manager import del_selection as del_data
-import extensions.selector.colorful_selection.new_selector.register_in_database as rid
+import extensions.selector.options_manager as om
+# from extensions.selector.options_manager import del_selection as del_data
+import extensions.selector.new_selector.register_in_database as rid
 
 def get_data(parameters):
   data = get_data_from_db(get_name(parameters))

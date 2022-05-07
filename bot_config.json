@@ -1,9 +1,9 @@
 {
   "windows_me": {
     "library": "_discord.py",
-    "prefix": ".",
+    "prefix": "$",
     "debug": true,
-    "extensions": [],
+    "extensions": ["selector"],
     "connect_msg": "AZUL AZUL AZUL TELA AZUL KKKKKKKKKKKKKKKKK\nfeliz 2005",
     "shutdown_msg": "O PORNO DE ANAO DO BILL GATES TÁ EM 4K SOCOOOO...",
     "_notify_if_online": true

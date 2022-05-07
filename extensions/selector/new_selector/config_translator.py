@@ -1,4 +1,4 @@
-import extensions.selector.colorful_selection.basic_selectors as basic_selectors
+import extensions.selector.basic_selectors as basic_selectors
 
 
 def config_translator(message, config):
