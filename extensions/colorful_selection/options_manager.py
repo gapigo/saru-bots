@@ -9,13 +9,18 @@ import extensions.colorful_selection.helper_message as hm
 from extensions.colorful_selection.new_selection.register_in_database import db
 import asyncio
 
-async def return_response(message, client):
-  if not isinstance(message, str):
-    parameters = message.content.split('$sel')[1].strip()
-  elif message.startswith('$sel'):
-    parameters = message.split('$sel')[1].strip()
-  else:
-    parameters = message.strip()
+class Message():
+  def __init__(self, content, author):
+    self.content = content
+    # self.channel = channel
+    self.author = author
+
+
+async def return_response(message, client, author=None):
+  if isinstance(message, str):
+    message = Message(message, author)
+
+  parameters = message.content.split('$sel')[1].strip()
   if parameters.startswith('--new'):
     return create_selection(message, parameters)
   

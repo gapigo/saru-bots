@@ -6,6 +6,8 @@ class d:
 
 db = d()
 def register_in_database(data):
+  print('BULCE')
+  print(data)
   if "colorful_selections" in db.keys():
     if selection_name_exists(data['config']['name']):
       return False

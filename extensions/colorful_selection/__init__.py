@@ -23,7 +23,7 @@ class ColorfulSelection(commands.Cog):
         print('SOPA SHIRU')
         message = f'$sel {message}'
         print(message)
-        response = await selection_options(message, self.client)
+        response = await selection_options(message, self.client, ctx.author)
         if isinstance(response, tuple):
             if response[1] == True:
                 await ctx.channel.purge(limit=1)
