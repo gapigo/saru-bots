@@ -1,4 +1,6 @@
-from extensions.colorful_selection.new_selection.register_in_database import db
+# from extensions.colorful_selection.new_selection.register_in_database import db
+from flask_app import db
+from .models import ColorfulSelection
 import datetime
 import extensions.colorful_selection.options_manager as om
 # from extensions.colorful_selection.options_manager import del_selection as del_data
@@ -28,16 +30,46 @@ def update_data(data):
   rid.register_in_database(data)
 
 
+# def get_data_from_db(message):
+#   try:
+#     if message.startswith('$sel'):
+#       name = message.split('$sel')[1].strip()
+#     else:
+#       name = message.strip()
+#     for data in db['colorful_selections']:
+#       if data['config']['name'] == name:
+#           return data
+#     return False
+#   except:
+#     return False
+
+"""
+{'selection': '```css\n[ Mensagem exemplo ]\n```',
+ 'config': {'error': '', 'private': True, 'delete': True,
+            'name': 'laranja', 'color': 'o', 'message': 'Mensagem exemplo'}, 
+  'user': '325384616221474818'}
+"""
 def get_data_from_db(message):
   try:
     if message.startswith('$sel'):
       name = message.split('$sel')[1].strip()
     else:
       name = message.strip()
-    for data in db['colorful_selections']:
-      if data['config']['name'] == name:
-          return data
-    return False
+    selection = ColorfulSelection.query.filter_by(name=name).first()
+    data = {
+      'selection': selection.selection,
+      'config': {'error': '',
+                'private': selection.private,
+                'delete': selection.delete,
+                'name': selection.name,
+                'color': selection.color, 
+                'message': selection.message}, 
+      'user': selection.user
+    }
+    # for data in db['colorful_selections']:
+    #   if data['config']['name'] == name:
+    return data
+    # return False
   except:
     return False
 
@@ -58,7 +90,7 @@ def discord_get_current_user(message):
 def put_templates(data: dict, parameters: str):
     data['t_selection'] = selection = data['selection']
     if selection.find('$(date)') != -1:
-        data['t_selection']: str = put_date_selection(data['t_selection'])
+        data['t_selection'] = put_date_selection(data['t_selection'])
     if selection.find('$(i)') != -1:
         data: dict = put_increment(data, parameters)
     if selection.find('$(ii)') != -1:

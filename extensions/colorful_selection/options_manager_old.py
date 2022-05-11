@@ -6,9 +6,7 @@ from extensions.colorful_selection.get_saved_selection import get_data_from_db a
 import extensions.colorful_selection.basic_selection as bs
 import extensions.colorful_selection.helper_message as hm
 
-#from extensions.colorful_selection.new_selection.register_in_database import db
-from flask_app import db
-from .models import ColorfulSelection
+from extensions.colorful_selection.new_selection.register_in_database import db
 import asyncio
 
 class Message():
@@ -97,22 +95,13 @@ def create_selection(message, parameters):
   response += f'\n**$sel {data["config"]["name"]}** para usar.'
   return response
 
-# def del_selection(data):
-#   name = get_name_from_data(data)
-#   selections = db['colorful_selections']
-#   for json_data in selections:
-#     if get_name_from_data(json_data) == name:
-#       selections.remove(json_data)
-#       return json_data
-
 def del_selection(data):
   name = get_name_from_data(data)
-  selections = ColorfulSelection.query.all()
-  for selection in selections:
-    if selection.name == name:
-      db.session.delete(selection)
-      db.session.commit()
-      return selection
+  selections = db['colorful_selections']
+  for json_data in selections:
+    if get_name_from_data(json_data) == name:
+      selections.remove(json_data)
+      return json_data
 
 def format_parameters(parameters):
   if parameters.startswith('--new') or parameters.startswith('--mod') or parameters.startswith('--del') or parameters.startswith('--dat'):
