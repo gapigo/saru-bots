@@ -29,13 +29,18 @@ def register_in_database(data):
     while True:
         db.session.rollback()
         try:
-            i = ColorfulSelection(data['config']['name'], 
-                                data['selection'], 
-                                data['config']['color'], 
-                                data['config']['message'], 
-                                data['user'], 
-                                data['config']['private'], 
-                                data['config']['delete'])
+            if type(data) != dict:
+                i = data
+            else:
+                i = ColorfulSelection(
+                        data['config']['name'], 
+                        data['selection'], 
+                        data['config']['color'], 
+                        data['config']['message'], 
+                        data['user'], 
+                        data['config']['private'], 
+                        data['config']['delete']
+                    )
             db.session.add(i)
             db.session.commit()
             #print("Nobo cor cororido corocado.")

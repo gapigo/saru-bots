@@ -3,6 +3,7 @@ import extensions.colorful_selection.new_selection.register_in_database as rid
 from extensions.colorful_selection.get_saved_selection import validate_if_private as validate_if_private
 from extensions.colorful_selection.get_saved_selection import get_data as get_saved_data
 from extensions.colorful_selection.get_saved_selection import get_data_from_db as get_data_from_name
+from extensions.colorful_selection.get_saved_selection import get_data_from_db
 import extensions.colorful_selection.basic_selection as bs
 import extensions.colorful_selection.helper_message as hm
 
@@ -120,10 +121,16 @@ def format_parameters(parameters):
 
 def get_modifying_data(comparing_data):
   name = get_name_from_data(comparing_data)
-  selections = db['colorful_selections']
-  for json_data in selections:
-    if get_name_from_data(json_data) == name:
-      return json_data
+  # print('baka')
+  # print(comparing_data)
+  # selections = ColorfulSelection.query.all()
+  # for selection in selections:
+  #   # if get_name_from_data(json_data) == name:
+  #   #   return json_data
+  #   if selection.name == name:
+  #     return selection
+  if data := get_data_from_db(name):
+    return data
   return comparing_data
 
 def get_name_from_data(data):
