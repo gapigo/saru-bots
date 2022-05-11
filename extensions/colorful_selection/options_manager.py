@@ -140,10 +140,17 @@ def get_name_from_data(data):
 
 async def list_selections(client):
   response = ''
-  for selection in db['colorful_selections']:
-    private = selection['config']['private']
-    name = selection['config']['name']
-    user_name = str(await client.fetch_user(int(selection['user'])))
+  selections = ColorfulSelection.query.all()
+  # for selection in db['colorful_selections']:
+  #   private = selection['config']['private']
+  #   name = selection['config']['name']
+  #   user_name = str(await client.fetch_user(int(selection['user'])))
+  #   response += f"{name} {' | ** privado de: ' + user_name + '**' if private else ''}\n"
+  for selection in selections:
+    selection_data = get_data_from_db(selection.name)
+    private = selection_data['config']['private']
+    name = selection_data['config']['name']
+    user_name = str(await client.fetch_user(int(selection_data['user'])))
     response += f"{name} {' | ** privado de: ' + user_name + '**' if private else ''}\n"
   if response == '':
     response = 'Lista vazia! Tente usar **$sel --new [nome]** para criar uma seleção.'
