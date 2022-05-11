@@ -6,16 +6,12 @@ from extensions.colorful_selection.get_saved_selection import get_data_from_db a
 from extensions.colorful_selection.get_saved_selection import get_data_from_db
 import extensions.colorful_selection.basic_selection as bs
 import extensions.colorful_selection.helper_message as hm
-
-#from extensions.colorful_selection.new_selection.register_in_database import db
 from flask_app import db
 from .models import ColorfulSelection
-import asyncio
 
 class Message():
   def __init__(self, content, author):
     self.content = content
-    # self.channel = channel
     self.author = author
 
 
@@ -98,14 +94,6 @@ def create_selection(message, parameters):
   response += f'\n**$sel {data["config"]["name"]}** para usar.'
   return response
 
-# def del_selection(data):
-#   name = get_name_from_data(data)
-#   selections = db['colorful_selections']
-#   for json_data in selections:
-#     if get_name_from_data(json_data) == name:
-#       selections.remove(json_data)
-#       return json_data
-
 def del_selection(data):
   name = get_name_from_data(data)
   selections = ColorfulSelection.query.all()
@@ -121,14 +109,6 @@ def format_parameters(parameters):
 
 def get_modifying_data(comparing_data):
   name = get_name_from_data(comparing_data)
-  # print('baka')
-  # print(comparing_data)
-  # selections = ColorfulSelection.query.all()
-  # for selection in selections:
-  #   # if get_name_from_data(json_data) == name:
-  #   #   return json_data
-  #   if selection.name == name:
-  #     return selection
   if data := get_data_from_db(name):
     return data
   return comparing_data
@@ -141,16 +121,10 @@ def get_name_from_data(data):
 async def list_selections(client):
   response = ''
   selections = ColorfulSelection.query.all()
-  # for selection in db['colorful_selections']:
-  #   private = selection['config']['private']
-  #   name = selection['config']['name']
-  #   user_name = str(await client.fetch_user(int(selection['user'])))
-  #   response += f"{name} {' | ** privado de: ' + user_name + '**' if private else ''}\n"
   for selection in selections:
-    selection_data = get_data_from_db(selection.name)
-    private = selection_data['config']['private']
-    name = selection_data['config']['name']
-    user_name = str(await client.fetch_user(int(selection_data['user'])))
+    private = selection.private
+    name = selection.name
+    user_name = str(await client.fetch_user(int(selection.user)))
     response += f"{name} {' | ** privado de: ' + user_name + '**' if private else ''}\n"
   if response == '':
     response = 'Lista vazia! Tente usar **$sel --new [nome]** para criar uma seleção.'

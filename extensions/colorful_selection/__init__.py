@@ -20,9 +20,7 @@ class ColorfulSelection(commands.Cog):
     # Ping
     @commands.command()
     async def sel(self, ctx, *, message):
-        print('SOPA SHIRU')
         message = f'$sel {message}'
-        print(message)
         response = await selection_options(message, self.client, ctx.author)
         if isinstance(response, tuple):
             if response[1] == True:
