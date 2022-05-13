@@ -17,5 +17,4 @@ pip install discord
 mv /opt/virtualenvs/python3/lib/python3.8/site-packages/flask_script/__init__.py /opt/virtualenvs/python3/lib/python3.8/site-packages/flask_script/__init__.py.old
 cp flask_app/flask_script__init__.py /opt/virtualenvs/python3/lib/python3.8/site-packages/flask_script/__init__.py
 
-
 python run.py

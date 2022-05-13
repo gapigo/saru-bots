@@ -5,6 +5,7 @@ import lightbulb
 from .models import NanoMouraMessage
 from sqlalchemy.exc import IntegrityError
 from flask_app import db
+from bots import get_general_config
 
 random_messages_nano_moura = lightbulb.Plugin("RandomMessagesNanoMoura")
 
@@ -19,7 +20,7 @@ def load_messages(type=None):
 
 messages = load_messages()
 current_hour = datetime.now().hour
-MAX = 0.07  # at the peek nano_moura will interfere at this percentage (1 = 100%)
+MAX = 0.04  # at the peek nano_moura will interfere at this percentage (1 = 100%)
 last_minute = 0
 minutes = [i for i in range(0 + 5, 61, 5)]
 
@@ -40,6 +41,7 @@ def randomize():
     for i, minute in enumerate(minutes):
         random_chances[minute] = chances[i]
 
+randomize()
 
 def set_last_minute(minute):
     global minutes, last_minute
@@ -63,6 +65,8 @@ async def on_message_create(event: hikari.GuildMessageCreateEvent) -> None:
         set_last_minute(time.minute)
     if random.random() < random_chances[last_minute]:
         await event.get_channel().send(random.choice(messages))
+        alert_channel = event.get_guild().get_channel(get_general_config().get("alert_channel_id"))
+        await alert_channel.send(f'Chance de {random_chances[last_minute]*100}%')
 
 
 @random_messages_nano_moura.command
