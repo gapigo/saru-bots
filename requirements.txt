@@ -6,4 +6,6 @@ Flask-Script
 Flask-SQLAlchemy
 Flask-Migrate==2.6.0
 uvloop
+BeautifulSoup4
+html2image
 # discord # hikari 2.0.0.dev108 requires aiohttp~=3.8, but you have aiohttp 3.7.4.post0 which is incompatible
