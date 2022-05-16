@@ -4,6 +4,7 @@ from .is_cjk import is_kanji
 from discord.ext import commands
 import os
 from pathlib import Path
+from bots import get_general_config
 import discord
 
 KANJI_CHANNEL_ID = '839084585760587797'
@@ -13,8 +14,9 @@ class ComandosSimples(commands.Cog):
     def __init__(self, client):
         self.bot = client
     
-    async def get_channel(self, ctx):
-        if kanji_channel := os.getenv('kanji_channel'):
+    def get_channel(self, ctx):
+        # if kanji_channel := os.getenv('kanji_channel'):
+        if kanji_channel := get_general_config().get('kanji_channel'):
             if kanji_channel.isnumeric() and len(kanji_channel) == 18:
                 c_channel = discord.utils.get(ctx.guild.text_channels, id=kanji_channel)
             else:
@@ -53,10 +55,8 @@ class ComandosSimples(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def send_kanji(self, ctx):
-        print(str(ctx.channel.id))
-        print(self.get_channel(ctx).id)
-        print(self.get_channel(ctx))
-        if str(ctx.channel.id) == self.get_channel(ctx).id:
+        fetched_channel = self.get_channel(ctx)
+        if str(ctx.channel.id) == str(fetched_channel.id):
             msg = ctx.content
             if len(msg) == 1 and is_kanji(msg):
                 await ctx.channel.purge(limit=1)
@@ -75,7 +75,14 @@ class ComandosSimples(commands.Cog):
                         # 'kunyomi': 'とし、とせ、よわい',
                         # 'meaning': 'year-end, age, occasion, opportunity',
                         # 'link': 'http://www.romajidesu.com/kanji/%E6%AD%B3'}
-                        img = 'nihongoichiban.gif' if res.get('plataform') == 'nihongoichiban' else 'romajidesu.png'
+                        if res.get('plataform') == 'nihongoichiban':
+                            img = 'nihongoichiban.gif'
+                        elif res.get('plataform') == 'romajidesu':
+                            img = 'romajidesu.png'
+                        # elif res.get('plataform') == 'romanjitanoshii':
+                        else:
+                            img = 'tanoshiijapanese.jpg'  
+                        # img = 'nihongoichiban.gif' if res.get('plataform') == 'nihongoichiban' else 'romajidesu.png'
                         fmsg = f'''**{res.get('kanji')}**\n        
 音読み
 {res.get('onyomi') if res.get('onyomi') else '-'}

@@ -1,4 +1,5 @@
-from os import path
+#from os import path
+import os
 from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +9,7 @@ from html2image import Html2Image
 from PIL import Image
 
 hti = Html2Image()
-hti.output_path = path.join(Path(__file__).parent.absolute(), f'images')
+hti.output_path = os.path.join(Path(__file__).parent.absolute(), f'images')
 only_romajidesu = False
 
 
@@ -17,8 +18,8 @@ def get_html_from_url(url: str):
     return BeautifulSoup(req.content, 'html.parser')
 
 
-def download_image(url:str, path:str=None):
-    with open(path.join(Path(__file__).parent.absolute(), f'images/nihongoichiban.gif' if not path else path), "wb") as f:
+def download_image(url:str, _path:str=None):
+    with open(os.path.join(Path(__file__).parent.absolute(), f'images/nihongoichiban.gif' if not _path else _path), "wb") as f:
         f.write(requests.get(url).content)
 
 
@@ -126,26 +127,26 @@ def search_on_romajidesu(searched_kanji: str) -> dict:
 
     onyomi = get_kana(onyomis)
     kunyomi = get_kana(kunyomis)
+    if not only_romajidesu:
+        str_file = '<html>'
+        for script in soup.find_all("script"):
+            content = str(script)
+            if 'uniconsent' not in content:
+                str_file += content + '\n\n'
+        str_file += str(soup.find_all("div", class_="kanji_strokes_order")[0])
+        str_file += '</html>'
 
-    str_file = '<html>'
-    for script in soup.find_all("script"):
-        content = str(script)
-        if 'uniconsent' not in content:
-            str_file += content + '\n\n'
-    str_file += str(soup.find_all("div", class_="kanji_strokes_order")[0])
-    str_file += '</html>'
+        html_path = str(os.path.join(Path(__file__).parent.absolute(), f'html/kanji_page.html'))
+        with open(html_path, "w", encoding="utf-8") as file:
+            file.write(str_file)
 
-    html_path = str(path.join(Path(__file__).parent.absolute(), f'html/kanji_page.html'))
-    with open(html_path, "w", encoding="utf-8") as file:
-        file.write(str_file)
-
-    div_kanji_info = soup.find_all("div", class_="kanji_info")[0]
-    stroke_count = int(div_kanji_info.findChildren("a")[0].findChildren("b")[0].getText())
-    width = 10 if stroke_count >= 10 else stroke_count
-    height = 1 if stroke_count <= 10 else (2 if stroke_count <= 20 else 3)
-    hti.screenshot(
-        html_file=html_path, save_as='romajidesu.png', size=(width * 58 + 20, height * 58 + 20)
-    )
+        div_kanji_info = soup.find_all("div", class_="kanji_info")[0]
+        stroke_count = int(div_kanji_info.findChildren("a")[0].findChildren("b")[0].getText())
+        width = 10 if stroke_count >= 10 else stroke_count
+        height = 1 if stroke_count <= 10 else (2 if stroke_count <= 20 else 3)
+        hti.screenshot(
+            html_file=html_path, save_as='romajidesu.png', size=(width * 58 + 20, height * 58 + 20)
+        )
     return {
         'kanji': searched_kanji,
         'plataform': 'romajidesu',
@@ -161,31 +162,18 @@ def get_image_on_tanoshiijapanese(searched_kanji: str, data: dict):
     
     # Get image from url
     link_imagem = f'https://www.tanoshiijapanese.com/images/standard/j/{code}.png'
-    # response = requests.get(link_imagem)
-    # file = open("sample_image.png", "wb")
-    # file.write(response.content)
-    # file.close()
-    download_image(link_imagem)
+    download_image(link_imagem, 'images/tanoshiijapaneseaux.png')
     
-
-    # img = Image.open('sample_image.png')
-    # img = img.convert("RGBA")
-
-    # pixdata = img.load()
-
-    # width, height = img.size
-    # for y in range(height):
-    #     for x in range(width):
-    #         if pixdata[x, y] == (0, 0, 0, 0):
-    #             pixdata[x, y] = (230, 230, 230, 255)
-    #         # print(pixdata[x, y])
-
-    # img.save("img2.jpg", "PNG")
+    def get_img_path(img_name):
+        return os.path.join(Path(__file__).parent.absolute(), f'images/{img_name}')
+    image = Image.open(get_img_path('tanoshiijapaneseaux.png'))
+    new_image = Image.new("RGBA", image.size, "WHITE") # Create a white rgba background
+    new_image.paste(image, (0, 0), image)              # Paste the image on the background. Go to the links given below for details.
+    new_image.convert('RGB').save(get_img_path('tanoshiijapanese.jpg'), "JPEG")  # Save as JPEG
     
-    # image = Image.open('sample_image.png')
-    # new_image = Image.new("RGBA", image.size, "WHITE") # Create a white rgba background
-    # new_image.paste(image, (0, 0), image)              # Paste the image on the background. Go to the links given below for details.
-    # new_image.convert('RGB').save('test.jpg', "JPEG")  # Save as JPEG
+    data['plataform'] = 'romanjitanoshii'
+    data['link'] = f"{data['link']}\nhttps://www.tanoshiijapanese.com/dictionary/kanji_details.cfm?character_id={code}"
+    return data
     
 
 def search_kanji(kanji: str):
