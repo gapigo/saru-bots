@@ -1,2 +1,2 @@
 language = "bash"
-run = "bash run_replit.sh"
+run = "bash run.sh"
