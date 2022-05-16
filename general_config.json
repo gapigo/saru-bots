@@ -1,5 +1,8 @@
 {
   "connect_default_message": "O símbolo paterno está online.",
   "shutdown_default_message": "O símbolo paterno está offline.",
-  "alert_channel_id": "425222899104874507"
+  "alert_channel_id": "425222899104874507",
+
+  
+  "kanji_channel": "☢│call-de-testes"
 }

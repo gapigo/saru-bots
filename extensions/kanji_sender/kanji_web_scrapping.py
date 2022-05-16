@@ -5,17 +5,20 @@ from bs4 import BeautifulSoup
 from .convert import romajiToJapanese
 from urllib.parse import quote
 from html2image import Html2Image
+from PIL import Image
 
 hti = Html2Image()
 hti.output_path = path.join(Path(__file__).parent.absolute(), f'images')
+only_romajidesu = False
+
 
 def get_html_from_url(url: str):
     req = requests.get(url)
     return BeautifulSoup(req.content, 'html.parser')
 
 
-def download_image(url: str):
-    with open(path.join(Path(__file__).parent.absolute(), f'images/nihongoichiban.gif'), "wb") as f:
+def download_image(url:str, path:str=None):
+    with open(path.join(Path(__file__).parent.absolute(), f'images/nihongoichiban.gif' if not path else path), "wb") as f:
         f.write(requests.get(url).content)
 
 
@@ -153,6 +156,38 @@ def search_on_romajidesu(searched_kanji: str) -> dict:
     }
 
 
+def get_image_on_tanoshiijapanese(searched_kanji: str, data: dict):
+    code = ord(searched_kanji)
+    
+    # Get image from url
+    link_imagem = f'https://www.tanoshiijapanese.com/images/standard/j/{code}.png'
+    # response = requests.get(link_imagem)
+    # file = open("sample_image.png", "wb")
+    # file.write(response.content)
+    # file.close()
+    download_image(link_imagem)
+    
+
+    # img = Image.open('sample_image.png')
+    # img = img.convert("RGBA")
+
+    # pixdata = img.load()
+
+    # width, height = img.size
+    # for y in range(height):
+    #     for x in range(width):
+    #         if pixdata[x, y] == (0, 0, 0, 0):
+    #             pixdata[x, y] = (230, 230, 230, 255)
+    #         # print(pixdata[x, y])
+
+    # img.save("img2.jpg", "PNG")
+    
+    # image = Image.open('sample_image.png')
+    # new_image = Image.new("RGBA", image.size, "WHITE") # Create a white rgba background
+    # new_image.paste(image, (0, 0), image)              # Paste the image on the background. Go to the links given below for details.
+    # new_image.convert('RGB').save('test.jpg', "JPEG")  # Save as JPEG
+    
+
 def search_kanji(kanji: str):
     # kanji = str(input('Enter with kanji: ')).strip()
     jlpts = ['n5', 'n4', 'n3']
@@ -162,7 +197,12 @@ def search_kanji(kanji: str):
         if r:
             yield r
             return
-
-    yield f'Searching on romajidesu...'
-    yield search_on_romajidesu(searched_kanji=kanji)
-    return
+    if only_romajidesu:
+        yield f'Searching on romajidesu...'
+        yield search_on_romajidesu(searched_kanji=kanji)
+        return
+    else:
+        yield f'Searching on romajidesu + tanoshiijapanese...'
+        romajidesu_response = search_on_romajidesu(searched_kanji=kanji)
+        yield get_image_on_tanoshiijapanese(searched_kanji=kanji, data=romajidesu_response)
+        return

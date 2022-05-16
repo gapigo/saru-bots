@@ -2,7 +2,7 @@ import datetime
 from .kanji_web_scrapping import search_kanji
 from .is_cjk import is_kanji
 from discord.ext import commands
-from os import path
+import os
 from pathlib import Path
 import discord
 
@@ -12,9 +12,20 @@ class ComandosSimples(commands.Cog):
 
     def __init__(self, client):
         self.bot = client
+    
+    async def get_channel(self, ctx):
+        if kanji_channel := os.getenv('kanji_channel'):
+            if kanji_channel.isnumeric() and len(kanji_channel) == 18:
+                c_channel = discord.utils.get(ctx.guild.text_channels, id=kanji_channel)
+            else:
+                c_channel = discord.utils.get(ctx.guild.text_channels, name=kanji_channel)
+            return c_channel
+        else:
+            raise ValueError('kanji_channel not found in general_config.json, inform the id or the name of a real channel of your server')
 
     async def print_date(self, ctx):
-        c_channel = discord.utils.get(ctx.guild.text_channels, name='🎌│kanji_diário-毎日の漢字')
+        # c_channel = discord.utils.get(ctx.guild.text_channels, name='🎌│kanji_diário-毎日の漢字')
+        c_channel = self.get_channel(ctx)
         messages = await c_channel.history(limit=10).flatten()
         count = 0
         current_date: datetime
@@ -42,7 +53,10 @@ class ComandosSimples(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def send_kanji(self, ctx):
-        if str(ctx.channel.id) == KANJI_CHANNEL_ID:
+        print(str(ctx.channel.id))
+        print(self.get_channel(ctx).id)
+        print(self.get_channel(ctx))
+        if str(ctx.channel.id) == self.get_channel(ctx).id:
             msg = ctx.content
             if len(msg) == 1 and is_kanji(msg):
                 await ctx.channel.purge(limit=1)
@@ -73,7 +87,7 @@ Meaning: {res.get('meaning')}
 {res.get('link')}'''
                         await ctx.channel.purge(limit=1)
                         await ctx.channel.send(content=fmsg,
-                                               file=discord.File(path.join(Path(__file__).parent.absolute(), f'images/{img}')))
+                                               file=discord.File(os.path.join(Path(__file__).parent.absolute(), f'images/{img}')))
 
 def setup(client):
     client.add_cog(ComandosSimples(client))

@@ -19,12 +19,11 @@ def add_bot_to_running_bots(bot_name: str, bot):
 
 
 def get_bots_config(lower: bool = False) -> dict:
-    print(os.getenv('PRODUCTION'))
     with open('bot_config_production.json' if os.getenv('PRODUCTION') else 'bot_config.json', encoding='utf-8') as j:
         available_bots = {}
         bots_config: dict = json.load(j)
         for bot_name, bot_config in bots_config.items():
-            if os.getenv('DEBUG') and not os.getenv('PRODUCTION'):
+            if os.getenv('DEBUG') and (not os.getenv('PRODUCTION') or os.getenv('PRODUCTION') == 'False'):
                 if bot_config.get('debug'):
                     available_bots[bot_name.lower() if lower else bot_name] = bot_config
             else:
