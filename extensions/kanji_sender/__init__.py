@@ -16,7 +16,11 @@ class ComandosSimples(commands.Cog):
     
     def get_channel(self, ctx):
         # if kanji_channel := os.getenv('kanji_channel'):
-        if kanji_channel := get_general_config().get('kanji_channel'):
+        if os.environ.get('DEBUG'):
+            selected_channel = get_general_config().get('test_channel')
+        else:
+            selected_channel = get_general_config().get('kanji_channel')
+        if kanji_channel := selected_channel:
             if kanji_channel.isnumeric() and len(kanji_channel) == 18:
                 c_channel = discord.utils.get(ctx.guild.text_channels, id=kanji_channel)
             else:
@@ -81,7 +85,7 @@ class ComandosSimples(commands.Cog):
                             img = 'romajidesu.png'
                         # elif res.get('plataform') == 'romanjitanoshii':
                         else:
-                            img = 'tanoshiijapanese.jpg'  
+                            img = 'tanoshiijapanese.png'  
                         # img = 'nihongoichiban.gif' if res.get('plataform') == 'nihongoichiban' else 'romajidesu.png'
                         fmsg = f'''**{res.get('kanji')}**\n        
 音読み

@@ -3,6 +3,6 @@
   "shutdown_default_message": "O símbolo paterno está offline.",
   "alert_channel_id": "425222899104874507",
 
-  
-  "kanji_channel": "☢│call-de-testes"
+  "kanji_channel": "🎌│kanji_diário-毎日の漢字",
+  "test_channel": "☢│call-de-testes"
 }

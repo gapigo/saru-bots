@@ -7,6 +7,7 @@ from .convert import romajiToJapanese
 from urllib.parse import quote
 from html2image import Html2Image
 from PIL import Image
+from .cut_image import generate_halfed_image
 
 hti = Html2Image()
 hti.output_path = os.path.join(Path(__file__).parent.absolute(), f'images')
@@ -173,6 +174,7 @@ def get_image_on_tanoshiijapanese(searched_kanji: str, data: dict):
     
     data['plataform'] = 'romanjitanoshii'
     data['link'] = f"{data['link']}\nhttps://www.tanoshiijapanese.com/dictionary/kanji_details.cfm?character_id={code}"
+    generate_halfed_image()
     return data
     
 
